@@ -9,7 +9,9 @@
 
 	3.文本中敲击return生成新的文本块
 
-	// TODO: 4.undo redo, 5.数据持久化存储读取
+	4.undo redo, 解决paper cell编辑时并行undo的问题(感觉是个设计问题)
+	
+	// TODO:  5.数据持久化存储读取
 	
 	
 ###用到的第三方库有
