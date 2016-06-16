@@ -11,6 +11,7 @@
 #import "PaperEditCell.h"
 #import "Masonry.h"
 #import "PaperEditCellModel.h"
+#import "NSObject+FBKVOController.h"
 
 static NSString *const kCellIdentifier = @"kCellIdentifier";
 
@@ -18,7 +19,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 
 @property (nonatomic, strong) PaperEditCell *selectedCell;
 @property (nonatomic, strong) PaperEditCell *selectedCellTricker;
-@property (nonatomic, strong) PaperEditCell *textViewIsEditingCell;
+@property (nonatomic, assign) NSInteger textViewIsEditingCellRow;
 
 @property (nonatomic, assign) CGFloat selectedCellTrickerBeganOriginY;
 @property (nonatomic, assign) CGFloat selectedCellTrickerBeganTouchLocationY;
@@ -29,9 +30,15 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 @implementation PaperEditView {
     @private
     UITableView *_tableView;
+    
+    BOOL _canUndo;
+    BOOL _canRedo;
+
+    NSMutableDictionary<NSValue */*PaperEditCellModel Pointer*/, PaperTextView *> *_textViewDic;
 }
 
 - (void)commonInit {
+    self.textViewIsEditingCellRow = -1;
     [self tableView];
 }
 
@@ -66,6 +73,22 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
         }];
     }
     return _tableView;
+}
+
+- (PaperTextView *)textViewForPaperEditCellModel:(PaperEditCellModel *)model {
+    if (nil == _textViewDic) {
+        _textViewDic = [NSMutableDictionary dictionary];
+        
+
+    }
+    
+    PaperTextView *textView = _textViewDic[[NSValue valueWithPointer:(__bridge void *)model]];
+    if (nil == textView) {
+        textView = [[PaperTextView alloc] init];
+        _textViewDic[[NSValue valueWithPointer:(__bridge void *)model]] = textView;
+    }
+    
+    return textView;
 }
 
 - (PaperEditCell *)selectedCellTricker {
@@ -114,16 +137,18 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
     PaperEditCellModel *model = self.dataSource[indexPath.row];
     
     PaperEditCell *cell = [tableView dequeueReusableCellWithIdentifier:kCellIdentifier];
-    if (nil != self.inputAccessoryView) {
+    [cell setupWithModel:model textView:[self textViewForPaperEditCellModel:model]];
+
+    if (nil != self.inputAccessoryView && nil != cell.textView) {
         cell.textView.inputAccessoryView = self.inputAccessoryView;
     }
-    [cell setupWithModel:model];
-    
+
     __weak UITableView *wTableView = tableView;
     __weak typeof(self) wSelf = self;
     
-    cell.selectAreaRecognizerStateChangedBlock = ^(PaperEditCell *selectedCell, UIGestureRecognizerState state, CGPoint location) {
-        NSIndexPath *selectedCellIndexPath = [wTableView indexPathForCell:selectedCell];
+    __weak PaperEditCell *wCell = cell;
+    cell.selectAreaRecognizerStateChangedBlock = ^(UIGestureRecognizerState state, CGPoint location) {
+        NSIndexPath *selectedCellIndexPath = [wTableView indexPathForCell:wCell];
         CGRect selectedCellRect = [wTableView rectForRowAtIndexPath:selectedCellIndexPath];
         CGFloat tableViewTouchLocationY = selectedCellRect.origin.y + location.y;
         PaperEditCell *selectedCellTricker = wSelf.selectedCellTricker;
@@ -132,18 +157,18 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
             selectedCellTricker.hidden = NO;
             
             selectedCellTricker.frame = CGRectMake(selectedCellRect.origin.x, selectedCellRect.origin.y - tableView.contentOffset.y, selectedCellRect.size.width, selectedCellRect.size.height);
-            selectedCellTricker.textView.frame = selectedCell.textView.frame;
-            selectedCellTricker.textView.font = selectedCell.textView.font;
-            selectedCellTricker.textView.text = selectedCell.textView.text;
+            selectedCellTricker.textView.frame = wCell.textView.frame;
+            selectedCellTricker.textView.font = wCell.textView.font;
+            selectedCellTricker.textView.text = wCell.textView.text;
             
             
             wSelf.selectedCellTrickerBeganTouchLocationY = tableViewTouchLocationY;
             wSelf.selectedCellTrickerBeganOriginY = selectedCellRect.origin.y;
             wSelf.selectedCellStartRow = selectedCellIndexPath.row;
             
-            wSelf.selectedCell = selectedCell;
+            wSelf.selectedCell = wCell;
             
-            selectedCell.hidden = YES;
+            wCell.hidden = YES;
             
             
         } else if (state == UIGestureRecognizerStateChanged) {
@@ -173,53 +198,56 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
             [UIView animateWithDuration:0.3 animations:^{
                 selectedCellTricker.frame = selectedCellTrickerFrame;
             } completion:^(BOOL finished) {
-                selectedCell.hidden = NO;
+                wCell.hidden = NO;
                 selectedCellTricker.hidden = YES;
             }];
             
             [self finalMoveEditCellAtRow:wSelf.selectedCellStartRow toRow:selectedCellIndexPath.row];
             
         } else {
-            NSParameterAssert(nil);
+            NSCParameterAssert(nil);
         }
     };
     
-    cell.textViewDidBeginEditingBlock = ^(PaperEditCell *editCell) {
-        [wSelf tagCellDidBeginEditing:editCell];
+    cell.textView.textViewWillFirstChangeAfterBeginEditing = ^() {
+        NSIndexPath *path = [wTableView indexPathForCell:wCell];
+        if (wSelf.textViewIsEditingCellRow == path.row) {
+            return;
+        }
+        [wSelf tagCellDidFirstEditing:path.row];
     };
     
-    cell.textViewDidChangeBlock = ^(PaperEditCell *editCell) {
-        NSIndexPath *editCellIndexPath = [wTableView indexPathForCell:editCell];
+    cell.textView.textViewDidChangeBlock = ^() {
+        NSIndexPath *editCellIndexPath = [wTableView indexPathForCell:wCell];
         PaperEditCellModel *editCellModel = wSelf.dataSource[editCellIndexPath.row];
-        editCellModel.content = editCell.textView.text;
-        CGFloat height = [PaperEditCell heightForContent:editCell.textView.text type:editCellModel.type];
-        if (ABS(height - editCell.textView.frame.size.height) > 1) {
+        editCellModel.content = wCell.textView.text;
+        CGFloat height = [PaperEditCell heightForContent:wCell.textView.text type:editCellModel.type];
+        if (ABS(height - wCell.textView.frame.size.height) > 1) {
             [wTableView reloadRowsAtIndexPaths:@[editCellIndexPath] withRowAnimation:UITableViewRowAnimationNone];
-            PaperEditCell *newCell = [wTableView cellForRowAtIndexPath:editCellIndexPath];
-            [newCell.textView becomeFirstResponder];
+            [wCell.textView becomeFirstResponder];
         }
+        [wSelf checkUndoRedoEnableState];
     };
     
-    cell.textViewDidSwipedRightBlock = ^(PaperEditCell *editCell) {
-        [wSelf editCellAtRow:[wTableView indexPathForCell:editCell].row typeChange:YES];
+    cell.textView.textViewDidSwipedRightBlock = ^() {
+        [wSelf editCellAtRow:[wTableView indexPathForCell:wCell].row typeChange:YES];
     };
     
-    cell.textViewDidTapReturnBlock = ^(PaperEditCell *editCell, NSRange returnRange) {
-        NSIndexPath *cellIndexPath = [wTableView indexPathForCell:editCell];
-        PaperEditCellModel *cellModel = wSelf.dataSource[cellIndexPath.row];
-        
-        NSString *content = cellModel.content;
-        NSString *leftContent = [content substringToIndex:returnRange.location];
-        NSString *rightContent = [content substringFromIndex:returnRange.location];
-        
-        cellModel.content = leftContent;
-        
-        PaperEditCellModel *newCellModel = [[PaperEditCellModel alloc] init];
-        newCellModel.content = rightContent;
-        newCellModel.type = cellModel.type;
-        
-        [wSelf.dataSource insertObject:newCellModel atIndex:cellIndexPath.row + 1];
-        [wTableView reloadData];
+    cell.textView.textViewShouldReturnBlock = ^(NSRange range) {
+        [wSelf breakCellAtRow:[wTableView indexPathForCell:wCell].row breakRange:range];
+        return NO;
+    };
+    
+    cell.textView.textViewShouldDeleteBlock = ^(NSRange range) {
+        if (range.location == 0 && range.length == 0) {
+            NSInteger row = [wTableView indexPathForCell:wCell].row;
+            if (row > 0) {
+                PaperEditCellModel *topCellModel = wSelf.dataSource[row - 1];
+                [wSelf combineCellAtRow:row combineRange:NSMakeRange(topCellModel.content.length, 0)];
+            }
+            return NO;
+        }
+        return YES;
     };
     
     return cell;
@@ -232,13 +260,41 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (nil != self.textViewIsEditingCell) {
-        [self tagCellDidResignEditing:self.textViewIsEditingCell];
+
+    if (self.textViewIsEditingCellRow > 0) {
+        [self tagCellDidResignEditing:self.textViewIsEditingCellRow];
+    }
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        cell.layoutMargins = UIEdgeInsetsZero;
     }
 }
 
 
 #pragma mark - Undo Action
+
+- (void)checkUndoRedoEnableState {
+    PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.textViewIsEditingCellRow inSection:0]];
+
+    BOOL canUndo = (nil != editCell && editCell.textView.undoManager.canUndo) || self.undoManager.canUndo;
+    BOOL canRedo = (nil != editCell && editCell.textView.undoManager.canRedo) || self.undoManager.canRedo;
+    
+    if (_canUndo != canUndo) {
+        _canUndo = canUndo;
+        if (nil != self.undoStateChangedBlock) {
+            self.undoStateChangedBlock(self);
+        }
+    }
+    if (_canRedo != canRedo) {
+        _canRedo = canRedo;
+        if (nil != self.redoStateChangedBlock) {
+            self.redoStateChangedBlock(self);
+        }
+    }
+}
 
 - (void)moveEditCellAtRow:(NSInteger)row1 toRow:(NSInteger)row2 {
 
@@ -263,6 +319,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
     
     [[self.undoManager prepareWithInvocationTarget:self] moveEditCellAtRow:row2 toRow:row1];
     
+    [self checkUndoRedoEnableState];
 }
 
 - (void)editCellAtRow:(NSInteger)row typeChange:(BOOL)toNext {
@@ -286,56 +343,105 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
     }
 
     cellModel.type = type;
-    [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    [self.tableView reloadData];
+    
+    [self checkUndoRedoEnableState];
 }
 
-- (void)tagCellDidBeginEditing:(PaperEditCell *)editCell {
-    if (nil == self.textViewIsEditingCell) {
-        [[self.undoManager prepareWithInvocationTarget:self] tagCellDidResignEditing:editCell];
+- (void)tagCellDidFirstEditing:(NSInteger)editCellRow {
+    if (self.textViewIsEditingCellRow == -1) {
+        [[self.undoManager prepareWithInvocationTarget:self] tagCellDidResignEditing:editCellRow];
     } else {
-        [[self.undoManager prepareWithInvocationTarget:self] tagCellDidBeginEditing:self.textViewIsEditingCell];
+        [[self.undoManager prepareWithInvocationTarget:self] tagCellDidFirstEditing:self.textViewIsEditingCellRow];
     }
     
-    [editCell.textView becomeFirstResponder];
-    self.textViewIsEditingCell = editCell;
+    self.textViewIsEditingCellRow = editCellRow;
     
+    [self checkUndoRedoEnableState];
 }
 
-- (void)tagCellDidResignEditing:(PaperEditCell *)editCell {
-    [[self.undoManager prepareWithInvocationTarget:self] tagCellDidBeginEditing:editCell];
+- (void)tagCellDidResignEditing:(NSInteger)editCellRow {
+    [[self.undoManager prepareWithInvocationTarget:self] tagCellDidFirstEditing:editCellRow];
     
-    [editCell resignFirstResponder];
-    self.textViewIsEditingCell = nil;
+    PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:editCellRow inSection:0]];
+
+    [editCell.textView resignFirstResponder];
+    self.textViewIsEditingCellRow = -1;
+    
+    [self checkUndoRedoEnableState];
+}
+
+- (void)breakCellAtRow:(NSInteger)row breakRange:(NSRange)range {
+    [[self.undoManager prepareWithInvocationTarget:self] combineCellAtRow:row + 1 combineRange:range];
+    
+    PaperEditCellModel *cellModel = self.dataSource[row];
+    
+    NSString *content = cellModel.content;
+    NSString *leftContent = [content substringToIndex:range.location];
+    NSString *rightContent = [content substringFromIndex:range.location];
+    
+    cellModel.content = leftContent;
+    
+    PaperEditCellModel *newCellModel = [[PaperEditCellModel alloc] init];
+    newCellModel.content = rightContent;
+    newCellModel.type = cellModel.type;
+    
+    [self.dataSource insertObject:newCellModel atIndex:row + 1];
+    [self.tableView reloadData];
+    PaperEditCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row + 1 inSection:0]];
+    [cell.textView becomeFirstResponder];
+    cell.textView.selectedRange = NSMakeRange(0, 0);
+    
+    [self checkUndoRedoEnableState];
+}
+
+- (void)combineCellAtRow:(NSInteger)row combineRange:(NSRange)range {
+    [[self.undoManager prepareWithInvocationTarget:self] breakCellAtRow:row - 1 breakRange:range];
+    
+    PaperEditCellModel *breakedCellModel = self.dataSource[row - 1];
+    PaperEditCellModel *cellModel = self.dataSource[row];
+    
+    NSMutableString *str = [NSMutableString stringWithString:breakedCellModel.content];
+    [str replaceCharactersInRange:range withString:cellModel.content];
+    breakedCellModel.content = str;
+    [self.dataSource removeObjectAtIndex:row];
+    
+    [self.tableView reloadData];
+    PaperEditCell *breakedCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:0]];
+    [breakedCell.textView becomeFirstResponder];
+    breakedCell.textView.selectedRange = range;
+
+    [self checkUndoRedoEnableState];
 }
 
 - (void)undo {
-    if (nil != self.textViewIsEditingCell && self.textViewIsEditingCell.textView.undoManager.canUndo) {
-        [self.textViewIsEditingCell.textView.undoManager undo];
+    PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.textViewIsEditingCellRow inSection:0]];
+
+    if (nil != editCell && editCell.textView.undoManager.canUndo) {
+        [editCell.textView.undoManager undo];
     } else {
         [self.undoManager undo];
     }
+    [self checkUndoRedoEnableState];
 }
 
 - (void)redo {
-    if (nil != self.textViewIsEditingCell && self.textViewIsEditingCell.textView.undoManager.canRedo) {
-        [self.textViewIsEditingCell.textView.undoManager redo];
+    PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.textViewIsEditingCellRow inSection:0]];
+
+    if (nil != editCell && editCell.textView.undoManager.canRedo) {
+        [editCell.textView.undoManager redo];
     } else {
         [self.undoManager redo];
     }
+    [self checkUndoRedoEnableState];
 }
 
 - (bool)canUndo {
-    if (nil != self.textViewIsEditingCell && self.textViewIsEditingCell.textView.undoManager.canUndo) {
-        return true;
-    }
-    return self.undoManager.canUndo;
+    return _canUndo;
 }
 
 - (bool)canRedo {
-    if (nil != self.textViewIsEditingCell && self.textViewIsEditingCell.textView.undoManager.canRedo) {
-        return true;
-    }
-    return self.undoManager.canRedo;
+    return _canRedo;
 }
 
 

@@ -25,6 +25,14 @@
     PaperEditView *pView = [[PaperEditView alloc] init];
     pView.inputAccessoryView = view;
     
+    __weak typeof(self) wSelf = self;
+    pView.redoStateChangedBlock = ^(PaperEditView *editView) {
+        [wSelf refreshUnReDoBtn];
+    };
+    pView.undoStateChangedBlock = ^(PaperEditView *editView) {
+        [wSelf refreshUnReDoBtn];
+    };
+    
     [self.view addSubview:pView];
     
     [pView mas_makeConstraints:^(MASConstraintMaker *make, UIView *superview) {
@@ -34,10 +42,22 @@
 
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"undo" style:UIBarButtonItemStylePlain target:self action:@selector(undoAction:)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"redo" style:UIBarButtonItemStylePlain target:self action:@selector(redoAction:)];
+    
+    [self refreshUnReDoBtn];
 }
 
 - (void)undoAction:(id)sender {
     [_pView undo];
+}
+
+- (void)redoAction:(id)sender {
+    [_pView redo];
+}
+
+- (void)refreshUnReDoBtn {
+    self.navigationItem.leftBarButtonItem.enabled = _pView.canRedo;
+    self.navigationItem.rightBarButtonItem.enabled = _pView.canUndo;
 }
 
 @end

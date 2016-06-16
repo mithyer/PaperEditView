@@ -10,7 +10,8 @@
 		7116C4611D0D3FAB009C736C /* PaperEditCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7116C4601D0D3FAB009C736C /* PaperEditCellModel.m */; };
 		712A9AD81D11183B00228F49 /* PaperEditView.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9AD71D11183B00228F49 /* PaperEditView.m */; };
 		712A9ADB1D11186A00228F49 /* PaperEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9ADA1D11186A00228F49 /* PaperEditViewController.m */; };
-		712A9AE21D111B6300228F49 /* PaperEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9AE11D111B6300228F49 /* PaperEditCell.m */; };
+		712A9B211D128AE300228F49 /* PaperEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9B201D128AE300228F49 /* PaperEditCell.m */; };
+		712A9B241D128B7100228F49 /* PaperTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9B231D128B7100228F49 /* PaperTextView.m */; };
 		714866F61CFFD2060075BC03 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 714866F51CFFD2060075BC03 /* main.m */; };
 		714866F91CFFD2060075BC03 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 714866F81CFFD2060075BC03 /* AppDelegate.m */; };
 		714866FC1CFFD2060075BC03 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 714866FB1CFFD2060075BC03 /* ViewController.m */; };
@@ -48,8 +49,10 @@
 		712A9AD71D11183B00228F49 /* PaperEditView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditView.m; sourceTree = "<group>"; };
 		712A9AD91D11186A00228F49 /* PaperEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditViewController.h; sourceTree = "<group>"; };
 		712A9ADA1D11186A00228F49 /* PaperEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditViewController.m; sourceTree = "<group>"; };
-		712A9AE01D111B6300228F49 /* PaperEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditCell.h; sourceTree = "<group>"; };
-		712A9AE11D111B6300228F49 /* PaperEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditCell.m; sourceTree = "<group>"; };
+		712A9B1F1D128AE300228F49 /* PaperEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditCell.h; sourceTree = "<group>"; };
+		712A9B201D128AE300228F49 /* PaperEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditCell.m; sourceTree = "<group>"; };
+		712A9B221D128B7100228F49 /* PaperTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperTextView.h; sourceTree = "<group>"; };
+		712A9B231D128B7100228F49 /* PaperTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperTextView.m; sourceTree = "<group>"; };
 		714866F11CFFD2060075BC03 /* PaperEditView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperEditView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		714866F51CFFD2060075BC03 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		714866F71CFFD2060075BC03 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -134,13 +137,15 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		712A9ADF1D111B6300228F49 /* Cell */ = {
+		712A9B1E1D128AE300228F49 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				712A9AE01D111B6300228F49 /* PaperEditCell.h */,
-				712A9AE11D111B6300228F49 /* PaperEditCell.m */,
+				712A9B1F1D128AE300228F49 /* PaperEditCell.h */,
+				712A9B201D128AE300228F49 /* PaperEditCell.m */,
+				712A9B221D128B7100228F49 /* PaperTextView.h */,
+				712A9B231D128B7100228F49 /* PaperTextView.m */,
 			);
-			path = Cell;
+			path = View;
 			sourceTree = "<group>";
 		};
 		714866E81CFFD2060075BC03 = {
@@ -190,7 +195,7 @@
 		7148670B1CFFD2360075BC03 /* PaperEditView */ = {
 			isa = PBXGroup;
 			children = (
-				712A9ADF1D111B6300228F49 /* Cell */,
+				712A9B1E1D128AE300228F49 /* View */,
 				7116C45E1D0D3F8E009C736C /* Model */,
 				712A9AD61D11183B00228F49 /* PaperEditView.h */,
 				712A9AD71D11183B00228F49 /* PaperEditView.m */,
@@ -384,11 +389,12 @@
 				714867331CFFD8B20075BC03 /* MASConstraintMaker.m in Sources */,
 				714867641CFFD9A20075BC03 /* UIImage+BlocksKit.m in Sources */,
 				7148675C1CFFD9A20075BC03 /* NSObject+BKBlockExecution.m in Sources */,
-				712A9AE21D111B6300228F49 /* PaperEditCell.m in Sources */,
+				712A9B211D128AE300228F49 /* PaperEditCell.m in Sources */,
 				714867371CFFD8B20075BC03 /* NSArray+MASAdditions.m in Sources */,
 				714867601CFFD9A20075BC03 /* NSObject+A2DynamicDelegate.m in Sources */,
 				714867651CFFD9A20075BC03 /* UIView+BlocksKit.m in Sources */,
 				7148673A1CFFD8B20075BC03 /* ViewController+MASAdditions.m in Sources */,
+				712A9B241D128B7100228F49 /* PaperTextView.m in Sources */,
 				714867321CFFD8B20075BC03 /* MASConstraint.m in Sources */,
 				712A9AD81D11183B00228F49 /* PaperEditView.m in Sources */,
 				714867341CFFD8B20075BC03 /* MASLayoutConstraint.m in Sources */,
