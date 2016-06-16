@@ -8,14 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		7116C4611D0D3FAB009C736C /* PaperEditCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7116C4601D0D3FAB009C736C /* PaperEditCellModel.m */; };
+		712A9AD81D11183B00228F49 /* PaperEditView.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9AD71D11183B00228F49 /* PaperEditView.m */; };
+		712A9ADB1D11186A00228F49 /* PaperEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9ADA1D11186A00228F49 /* PaperEditViewController.m */; };
+		712A9AE21D111B6300228F49 /* PaperEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 712A9AE11D111B6300228F49 /* PaperEditCell.m */; };
 		714866F61CFFD2060075BC03 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 714866F51CFFD2060075BC03 /* main.m */; };
 		714866F91CFFD2060075BC03 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 714866F81CFFD2060075BC03 /* AppDelegate.m */; };
 		714866FC1CFFD2060075BC03 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 714866FB1CFFD2060075BC03 /* ViewController.m */; };
 		714866FF1CFFD2060075BC03 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 714866FD1CFFD2060075BC03 /* Main.storyboard */; };
 		714867011CFFD2060075BC03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 714867001CFFD2060075BC03 /* Assets.xcassets */; };
 		714867041CFFD2060075BC03 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 714867021CFFD2060075BC03 /* LaunchScreen.storyboard */; };
-		714867111CFFD2760075BC03 /* PaperEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 714867101CFFD2760075BC03 /* PaperEditViewController.m */; };
-		714867151CFFD7F50075BC03 /* PaperEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 714867141CFFD7F50075BC03 /* PaperEditCell.m */; };
 		714867311CFFD8B20075BC03 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 714867191CFFD8B20075BC03 /* MASCompositeConstraint.m */; };
 		714867321CFFD8B20075BC03 /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7148671C1CFFD8B20075BC03 /* MASConstraint.m */; };
 		714867331CFFD8B20075BC03 /* MASConstraintMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 7148671E1CFFD8B20075BC03 /* MASConstraintMaker.m */; };
@@ -43,6 +44,12 @@
 /* Begin PBXFileReference section */
 		7116C45F1D0D3FAB009C736C /* PaperEditCellModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditCellModel.h; sourceTree = "<group>"; };
 		7116C4601D0D3FAB009C736C /* PaperEditCellModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditCellModel.m; sourceTree = "<group>"; };
+		712A9AD61D11183B00228F49 /* PaperEditView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditView.h; sourceTree = "<group>"; };
+		712A9AD71D11183B00228F49 /* PaperEditView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditView.m; sourceTree = "<group>"; };
+		712A9AD91D11186A00228F49 /* PaperEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditViewController.h; sourceTree = "<group>"; };
+		712A9ADA1D11186A00228F49 /* PaperEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditViewController.m; sourceTree = "<group>"; };
+		712A9AE01D111B6300228F49 /* PaperEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditCell.h; sourceTree = "<group>"; };
+		712A9AE11D111B6300228F49 /* PaperEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditCell.m; sourceTree = "<group>"; };
 		714866F11CFFD2060075BC03 /* PaperEditView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperEditView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		714866F51CFFD2060075BC03 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		714866F71CFFD2060075BC03 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -53,10 +60,6 @@
 		714867001CFFD2060075BC03 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		714867031CFFD2060075BC03 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		714867051CFFD2060075BC03 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7148670F1CFFD2760075BC03 /* PaperEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditViewController.h; sourceTree = "<group>"; };
-		714867101CFFD2760075BC03 /* PaperEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditViewController.m; sourceTree = "<group>"; };
-		714867131CFFD7F50075BC03 /* PaperEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaperEditCell.h; sourceTree = "<group>"; };
-		714867141CFFD7F50075BC03 /* PaperEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaperEditCell.m; sourceTree = "<group>"; };
 		714867181CFFD8B20075BC03 /* MASCompositeConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASCompositeConstraint.h; sourceTree = "<group>"; };
 		714867191CFFD8B20075BC03 /* MASCompositeConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASCompositeConstraint.m; sourceTree = "<group>"; };
 		7148671A1CFFD8B20075BC03 /* MASConstraint+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MASConstraint+Private.h"; sourceTree = "<group>"; };
@@ -131,6 +134,15 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		712A9ADF1D111B6300228F49 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				712A9AE01D111B6300228F49 /* PaperEditCell.h */,
+				712A9AE11D111B6300228F49 /* PaperEditCell.m */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
 		714866E81CFFD2060075BC03 = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +168,8 @@
 				714866F81CFFD2060075BC03 /* AppDelegate.m */,
 				714866FA1CFFD2060075BC03 /* ViewController.h */,
 				714866FB1CFFD2060075BC03 /* ViewController.m */,
+				712A9AD91D11186A00228F49 /* PaperEditViewController.h */,
+				712A9ADA1D11186A00228F49 /* PaperEditViewController.m */,
 				714866FD1CFFD2060075BC03 /* Main.storyboard */,
 				714867001CFFD2060075BC03 /* Assets.xcassets */,
 				714867021CFFD2060075BC03 /* LaunchScreen.storyboard */,
@@ -176,21 +190,12 @@
 		7148670B1CFFD2360075BC03 /* PaperEditView */ = {
 			isa = PBXGroup;
 			children = (
+				712A9ADF1D111B6300228F49 /* Cell */,
 				7116C45E1D0D3F8E009C736C /* Model */,
-				714867121CFFD7E30075BC03 /* View */,
-				7148670F1CFFD2760075BC03 /* PaperEditViewController.h */,
-				714867101CFFD2760075BC03 /* PaperEditViewController.m */,
+				712A9AD61D11183B00228F49 /* PaperEditView.h */,
+				712A9AD71D11183B00228F49 /* PaperEditView.m */,
 			);
 			path = PaperEditView;
-			sourceTree = "<group>";
-		};
-		714867121CFFD7E30075BC03 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				714867131CFFD7F50075BC03 /* PaperEditCell.h */,
-				714867141CFFD7F50075BC03 /* PaperEditCell.m */,
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		714867161CFFD8B20075BC03 /* Vendor */ = {
@@ -369,9 +374,7 @@
 				714866FC1CFFD2060075BC03 /* ViewController.m in Sources */,
 				714867361CFFD8B20075BC03 /* MASViewConstraint.m in Sources */,
 				714867631CFFD9A20075BC03 /* UIGestureRecognizer+BlocksKit.m in Sources */,
-				714867151CFFD7F50075BC03 /* PaperEditCell.m in Sources */,
 				7148675B1CFFD9A20075BC03 /* NSObject+BKAssociatedObjects.m in Sources */,
-				714867111CFFD2760075BC03 /* PaperEditViewController.m in Sources */,
 				714866F91CFFD2060075BC03 /* AppDelegate.m in Sources */,
 				714867391CFFD8B20075BC03 /* View+MASAdditions.m in Sources */,
 				714867611CFFD9A20075BC03 /* UIBarButtonItem+BlocksKit.m in Sources */,
@@ -381,12 +384,15 @@
 				714867331CFFD8B20075BC03 /* MASConstraintMaker.m in Sources */,
 				714867641CFFD9A20075BC03 /* UIImage+BlocksKit.m in Sources */,
 				7148675C1CFFD9A20075BC03 /* NSObject+BKBlockExecution.m in Sources */,
+				712A9AE21D111B6300228F49 /* PaperEditCell.m in Sources */,
 				714867371CFFD8B20075BC03 /* NSArray+MASAdditions.m in Sources */,
 				714867601CFFD9A20075BC03 /* NSObject+A2DynamicDelegate.m in Sources */,
 				714867651CFFD9A20075BC03 /* UIView+BlocksKit.m in Sources */,
 				7148673A1CFFD8B20075BC03 /* ViewController+MASAdditions.m in Sources */,
 				714867321CFFD8B20075BC03 /* MASConstraint.m in Sources */,
+				712A9AD81D11183B00228F49 /* PaperEditView.m in Sources */,
 				714867341CFFD8B20075BC03 /* MASLayoutConstraint.m in Sources */,
+				712A9ADB1D11186A00228F49 /* PaperEditViewController.m in Sources */,
 				7148675E1CFFD9A20075BC03 /* A2DynamicDelegate.m in Sources */,
 				714866F61CFFD2060075BC03 /* main.m in Sources */,
 				7148675A1CFFD9A20075BC03 /* NSInvocation+BlocksKit.m in Sources */,

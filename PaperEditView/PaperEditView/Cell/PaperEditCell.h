@@ -13,6 +13,7 @@
 
 @property (nonatomic, copy) void (^selectAreaRecognizerStateChangedBlock)(PaperEditCell* selectedCell, UIGestureRecognizerState state, CGPoint location);
 @property (nonatomic, copy) void (^textViewDidChangeBlock)(PaperEditCell* editCell);
+@property (nonatomic, copy) void (^textViewDidBeginEditingBlock)(PaperEditCell* editCell);
 @property (nonatomic, copy) void (^textViewDidSwipedRightBlock)(PaperEditCell* editCell);
 @property (nonatomic, copy) void (^textViewDidTapReturnBlock)(PaperEditCell* editCell, NSRange returnRange);
 

@@ -22,7 +22,10 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    [self presentViewController:[[PaperEditViewController alloc] init] animated:YES completion:nil];
+    
+    UINavigationController *navi = [[UINavigationController alloc] initWithRootViewController:[[PaperEditViewController alloc] init]];
+    
+    [self presentViewController:navi animated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning {

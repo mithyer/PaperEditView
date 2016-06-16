@@ -206,6 +206,12 @@
 
 #pragma mark - UITextViewDelegate
 
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if (nil != self.textViewDidBeginEditingBlock) {
+        self.textViewDidBeginEditingBlock(self);
+    }
+}
+
 - (void)textViewDidChange:(UITextView *)textView {
     if (nil != self.textViewDidChangeBlock) {
         self.textViewDidChangeBlock(self);
