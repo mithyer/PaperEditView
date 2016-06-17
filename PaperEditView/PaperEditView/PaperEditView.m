@@ -11,7 +11,6 @@
 #import "PaperEditCell.h"
 #import "Masonry.h"
 #import "PaperEditCellModel.h"
-#import "NSObject+FBKVOController.h"
 
 static NSString *const kCellIdentifier = @"kCellIdentifier";
 
@@ -78,8 +77,6 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 - (PaperTextView *)textViewForPaperEditCellModel:(PaperEditCellModel *)model {
     if (nil == _textViewDic) {
         _textViewDic = [NSMutableDictionary dictionary];
-        
-
     }
     
     PaperTextView *textView = _textViewDic[[NSValue valueWithPointer:(__bridge void *)model]];
@@ -105,7 +102,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 // for test
-
+/*
 - (NSMutableArray *)dataSource {
     static NSMutableArray *array;
     static NSArray *textArray;
@@ -124,7 +121,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
     
     return array;
 }
-
+*/
 
 #pragma mark - Table view data source
 
@@ -261,7 +258,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 
-    if (self.textViewIsEditingCellRow > 0) {
+    if (self.textViewIsEditingCellRow >= 0) {
         [self tagCellDidResignEditing:self.textViewIsEditingCellRow];
     }
 }
@@ -277,7 +274,11 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 #pragma mark - Undo Action
 
 - (void)checkUndoRedoEnableState {
-    PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.textViewIsEditingCellRow inSection:0]];
+    PaperEditCell *editCell = nil;
+    
+    if (self.textViewIsEditingCellRow != - 1) {
+        editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.textViewIsEditingCellRow inSection:0]];
+    }
 
     BOOL canUndo = (nil != editCell && editCell.textView.undoManager.canUndo) || self.undoManager.canUndo;
     BOOL canRedo = (nil != editCell && editCell.textView.undoManager.canRedo) || self.undoManager.canRedo;
@@ -349,7 +350,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 - (void)tagCellDidFirstEditing:(NSInteger)editCellRow {
-    if (self.textViewIsEditingCellRow == -1) {
+    if (self.textViewIsEditingCellRow < 0) {
         [[self.undoManager prepareWithInvocationTarget:self] tagCellDidResignEditing:editCellRow];
     } else {
         [[self.undoManager prepareWithInvocationTarget:self] tagCellDidFirstEditing:self.textViewIsEditingCellRow];
@@ -361,6 +362,9 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 - (void)tagCellDidResignEditing:(NSInteger)editCellRow {
+    if (editCellRow <  0) {
+        return;
+    }
     [[self.undoManager prepareWithInvocationTarget:self] tagCellDidFirstEditing:editCellRow];
     
     PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:editCellRow inSection:0]];
@@ -415,6 +419,9 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 - (void)undo {
+    if (!_canUndo) {
+        return;
+    }
     PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.textViewIsEditingCellRow inSection:0]];
 
     if (nil != editCell && editCell.textView.undoManager.canUndo) {
@@ -426,6 +433,10 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 - (void)redo {
+    if (!_canRedo) {
+        return;
+    }
+    
     PaperEditCell *editCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.textViewIsEditingCellRow inSection:0]];
 
     if (nil != editCell && editCell.textView.undoManager.canRedo) {
