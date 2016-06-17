@@ -11,6 +11,7 @@
 #import "PaperEditCell.h"
 #import "Masonry.h"
 #import "PaperEditCellModel.h"
+#import <objc/runtime.h>
 
 static NSString *const kCellIdentifier = @"kCellIdentifier";
 
@@ -32,8 +33,6 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
     
     BOOL _canUndo;
     BOOL _canRedo;
-
-    NSMutableDictionary<NSValue */*PaperEditCellModel Pointer*/, PaperTextView *> *_textViewDic;
 }
 
 - (void)commonInit {
@@ -75,14 +74,13 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 - (PaperTextView *)textViewForPaperEditCellModel:(PaperEditCellModel *)model {
-    if (nil == _textViewDic) {
-        _textViewDic = [NSMutableDictionary dictionary];
-    }
+
+    static void *kTextViewkey = &kTextViewkey;
     
-    PaperTextView *textView = _textViewDic[[NSValue valueWithPointer:(__bridge void *)model]];
+    PaperTextView *textView = objc_getAssociatedObject(model, kTextViewkey);
     if (nil == textView) {
         textView = [[PaperTextView alloc] init];
-        _textViewDic[[NSValue valueWithPointer:(__bridge void *)model]] = textView;
+        objc_setAssociatedObject(model, kTextViewkey, textView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     
     return textView;
@@ -102,7 +100,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
 }
 
 // for test
-/*
+
 - (NSMutableArray *)dataSource {
     static NSMutableArray *array;
     static NSArray *textArray;
@@ -121,7 +119,7 @@ static NSString *const kCellIdentifier = @"kCellIdentifier";
     
     return array;
 }
-*/
+
 
 #pragma mark - Table view data source
 
